@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <strassen.h>
+#include "strassen.h"
 
 int** alocaMatriz(int NumMat){
     int **matriz, i;
