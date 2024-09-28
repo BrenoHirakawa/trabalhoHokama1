@@ -29,6 +29,19 @@ void liberaMatriz(int*** matriz, int NumMat){
 
 }
 
+void leMatriz(int*** matriz, int NumMat, int arraySize, int* valores){
+    int index = 0; 
+
+    for(int i = 0; i < NumMat; i++){
+        for(int j = 0; j < NumMat; j++){
+            for(int k = 0; k < arraySize; k++){
+                matriz[i][j][k] = valores[index++];
+            }
+        }
+    }
+
+}
+
 void imprimeMatriz(int*** matriz, int NumMat, int arraySize) {
     for (int i = 0; i < NumMat; i++) {
         for (int j = 0; j < NumMat; j++) {
@@ -41,17 +54,16 @@ void imprimeMatriz(int*** matriz, int NumMat, int arraySize) {
     }
 }
 
-void leMatriz(int*** matriz, int NumMat, int arraySize, int* valores){
-    int index = 0; 
-
-    for(int i = 0; i < NumMat; i++){
-        for(int j = 0; j < NumMat; j++){
-            for(int k = 0; k < arraySize; k++){
-                matriz[i][j][k] = valores[index++];
-            }
+void divideMatriz(int*** matriz, int*** A, int*** B, int*** C, int*** D, int tam){
+    // A, B, C e D são os quadrantes da matriz original
+    for (int i = 0; i < tam; i++) {
+        for (int j = 0; j < tam; j++) {
+            A[i][j] = matriz[i][j];              // Quadrante A
+            B[i][j] = matriz[i][j + tam];        // Quadrante B
+            C[i][j] = matriz[i + tam][j];        // Quadrante C
+            D[i][j] = matriz[i + tam][j + tam];  // Quadrante D
         }
     }
-
 }
 
 int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
@@ -86,6 +98,13 @@ int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
     int*** H = alocaMatriz(newSize, arraySize);
     
 
+    int*** P1;
+    int*** P2;
+    int*** P3;
+    int*** P4;
+    int*** P5;
+    int*** P6;
+    int*** P7;
 
 }
 
