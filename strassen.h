@@ -10,4 +10,4 @@ void divideMatriz(int*** matriz, int*** A, int*** B, int*** C, int*** D, int tam
 
 void matrizAleatoria(int NumMat);
 
-int strassen();
+void strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize);

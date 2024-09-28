@@ -20,13 +20,12 @@ int*** alocaMatriz(int NumMat, int arraySize){
 
 void liberaMatriz(int*** matriz, int NumMat){
     for(int i = 0; i < NumMat; i++){
-        for(int j = 0; i < NumMat; i++){
+        for(int j = 0; j < NumMat; j++){
             free(matriz[i][j]); //Libera array
         }
         free(matriz[i]); // Libera linha
     }
     free(matriz);
-
 }
 
 void leMatriz(int*** matriz, int NumMat, int arraySize, int* valores){
@@ -66,15 +65,28 @@ void divideMatriz(int*** matriz, int*** A, int*** B, int*** C, int*** D, int tam
     }
 }
 
-void somaMatriz(){
-
+void somaMatriz(int*** A, int*** B, int*** resultado, int NumMat, int arraySize){
+    for(int i = 0; i < NumMat; i++){
+        for(int j = 0; j < NumMat; j++){
+            for(int k = 0; k < arraySize; k++){
+                resultado[i][j][k] = A[i][j][k] + B[i][j][k];
+            }
+        }
+    }
 }
 
-void subMatriz(){
-
+void subtracaoMatriz(int*** A, int*** B, int*** resultado, int NumMat, int arraySize) {
+    for (int i = 0; i < NumMat; i++) {
+        for (int j = 0; j < NumMat; j++) {
+            for (int k = 0; k < arraySize; k++) {
+                resultado[i][j][k] = A[i][j][k] - B[i][j][k];
+            }
+        }
+    }
 }
 
-int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
+
+void strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
 
     int ***produto; 
     produto = malloc(NumMat * sizeof(int**));   
@@ -86,11 +98,11 @@ int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
         }
     }
 
-    if (NumMat <= 2) {
-        // Caso base: multiplicação de matrizes pequenas (2x2 ou 1x1)
-        // Código para multiplicação direta
-        return 0;
-    }
+    // if (NumMat <= 2) {
+    //     // Caso base: multiplicação de matrizes pequenas (2x2 ou 1x1)
+    //     // Código para multiplicação direta
+    //     return 1;
+    // }
 
     // Novo tamanho dos quadrantes
     int newSize = NumMat / 2;
@@ -108,7 +120,9 @@ int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
     int*** F = alocaMatriz(newSize, arraySize);
     int*** G = alocaMatriz(newSize, arraySize);
     int*** H = alocaMatriz(newSize, arraySize);
-    
+
+    divideMatriz(matriz1, A, B, C, D, newSize);
+    divideMatriz(matriz2, E, F, G, H, newSize);
 
     int*** P1 = alocaMatriz(newSize, arraySize);
     int*** P2 = alocaMatriz(newSize, arraySize);
@@ -122,15 +136,51 @@ int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
     int*** temp2 = alocaMatriz(newSize, arraySize); 
 
 
-    //P1 = A*(F-H)
-    subMatriz();
-    subMatriz();
-    strassen(temp1, temp2, NumMat, arraySize);
+    //P1 = A*(F - H)
+    subtracaoMatriz(F, H, temp1, NumMat, arraySize);
+    strassen(temp1, A, newSize, arraySize);
 
-    //P2 = (A+B)
-    subMatriz();
-    subMatriz();
-    strassen(temp1, temp2, NumMat, arraySize);
+    //P2 = (A + B)*H
+    somaMatriz(A, B, temp1, NumMat, arraySize);
+    strassen(temp1, H, newSize, arraySize);
+
+    //P3 = (C + D)*E
+    somaMatriz(C, D, temp1, NumMat, arraySize);
+    strassen(temp1, E, newSize, arraySize);
+
+    //P4 = D*(G − E)
+    subtracaoMatriz(G, E, temp1, NumMat, arraySize);
+    strassen(temp1, D, newSize, arraySize);
+
+    //P5 = (A + D)*(E + H)
+    somaMatriz(A, D, temp1, NumMat, arraySize);
+    somaMatriz(E, H, temp2, NumMat, arraySize);
+    strassen(temp1, temp2, newSize, arraySize);
+
+    //P6 = (B − D)*(G + H) 
+    subtracaoMatriz(B, D, temp1, NumMat, arraySize);
+    somaMatriz(G, H, temp2, newSize, arraySize);
+    strassen(temp1, temp2, newSize, arraySize);
+
+    //P7 = (A − C)*(E + F)
+    subtracaoMatriz(A, C, temp1, NumMat, arraySize);
+    somaMatriz(E, F, temp1, newSize, arraySize);
+    strassen(temp1, temp2, newSize, arraySize);
+
+    for (int i = 0; i < newSize; i++) {
+        for (int j = 0; j < newSize; j++) {
+            for (int k = 0; k < arraySize; k++) {
+                // C11
+                produto[i][j][k] = P5[i][j][k] + P4[i][j][k] - P2[i][j][k] + P6[i][j][k];
+                // C12
+                produto[i][j + newSize][k] = P1[i][j][k] + P2[i][j][k];
+                // C21
+                produto[i + newSize][j][k] = P3[i][j][k] + P4[i][j][k];
+                // C22
+                produto[i + newSize][j + newSize][k] = P5[i][j][k] + P1[i][j][k] - P3[i][j][k] - P7[i][j][k];
+            }
+        }
+    }
 
 
     liberaMatriz(A, newSize);
