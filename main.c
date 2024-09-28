@@ -30,7 +30,6 @@ void liberaMatriz(int*** matriz, int NumMat){
 
 void leMatriz(int*** matriz, int NumMat, int arraySize, int* valores){
     int index = 0; 
-
     for(int i = 0; i < NumMat; i++){
         for(int j = 0; j < NumMat; j++){
             for(int k = 0; k < arraySize; k++){
@@ -38,13 +37,11 @@ void leMatriz(int*** matriz, int NumMat, int arraySize, int* valores){
             }
         }
     }
-
 }
 
 void imprimeMatriz(int*** matriz, int NumMat, int arraySize) {
     for (int i = 0; i < NumMat; i++) {
         for (int j = 0; j < NumMat; j++) {
-            //printf("matriz[%d][%d]: ", i, j);
             for (int k = 0; k < arraySize; k++) {
                 printf("%d ", matriz[i][j][k]);
             }
@@ -88,26 +85,22 @@ void subtracaoMatriz(int*** A, int*** B, int*** resultado, int NumMat, int array
 
 void strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
 
-    int ***produto; 
-
-    // Novo tamanho dos quadrantes
-    int newSize = NumMat / 2;
-
-    produto = malloc(newSize * sizeof(int**));   
-    for(int i = 0; i < newSize; i++){
-        produto[i] = malloc(newSize * sizeof(int*));
-        for(int j = 0; j < newSize; j++){
-            produto[i][j] = malloc(arraySize * sizeof(int));
-        }
+    if (NumMat <= 2) {
+        // Caso base: multiplicação direta se a matriz for pequena
+        return;
     }
 
+    //Novo tamanho dos quadrantes
+    int newSize = NumMat / 2;
 
-    // if (NumMat <= 2) {
-    //     // Caso base: multiplicação de matrizes pequenas (2x2 ou 1x1)
-    //     // Código para multiplicação direta
-    //     return 1;
+    // int ***produto; 
+    // produto = malloc(newSize * sizeof(int**));   
+    // for(int i = 0; i < newSize; i++){
+    //     produto[i] = malloc(newSize * sizeof(int*));
+    //     for(int j = 0; j < newSize; j++){
+    //         produto[i][j] = malloc(arraySize * sizeof(int));
+    //     }
     // }
-
 
     // Alocar espaço para os quadrantes
     //
@@ -139,33 +132,33 @@ void strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
 
 
     //P1 = A*(F - H)
-    subtracaoMatriz(F, H, temp1, NumMat, arraySize);
+    subtracaoMatriz(F, H, temp1, newSize, arraySize);
     strassen(A, temp1, newSize, arraySize);
 
     //P2 = (A + B)*H
-    somaMatriz(A, B, temp1, NumMat, arraySize);
+    somaMatriz(A, B, temp1, newSize, arraySize);
     strassen(H, temp1, newSize, arraySize);
 
     //P3 = (C + D)*E
-    somaMatriz(C, D, temp1, NumMat, arraySize);
+    somaMatriz(C, D, temp1, newSize, arraySize);
     strassen(E, temp1, newSize, arraySize);
 
     //P4 = D*(G − E)
-    subtracaoMatriz(G, E, temp1, NumMat, arraySize);
+    subtracaoMatriz(G, E, temp1, newSize, arraySize);
     strassen(D, temp1, newSize, arraySize);
 
     //P5 = (A + D)*(E + H)
-    somaMatriz(A, D, temp1, NumMat, arraySize);
-    somaMatriz(E, H, temp2, NumMat, arraySize);
+    somaMatriz(A, D, temp1, newSize, arraySize);
+    somaMatriz(E, H, temp2, newSize, arraySize);
     strassen(temp1, temp2, newSize, arraySize);
 
     //P6 = (B − D)*(G + H) 
-    subtracaoMatriz(B, D, temp1, NumMat, arraySize);
+    subtracaoMatriz(B, D, temp1, newSize, arraySize);
     somaMatriz(G, H, temp2, newSize, arraySize);
     strassen(temp1, temp2, newSize, arraySize);
 
     //P7 = (A − C)*(E + F)
-    subtracaoMatriz(A, C, temp1, NumMat, arraySize);
+    subtracaoMatriz(A, C, temp1, newSize, arraySize);
     somaMatriz(E, F, temp1, newSize, arraySize);
     strassen(temp1, temp2, newSize, arraySize);
 
@@ -173,13 +166,13 @@ void strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
         for (int j = 0; j < newSize; j++) {
             for (int k = 0; k < arraySize; k++) {
                 // C11
-                produto[i][j][k] = P5[i][j][k] + P4[i][j][k] - P2[i][j][k] + P6[i][j][k];
+                matriz1[i][j][k] = P5[i][j][k] + P4[i][j][k] - P2[i][j][k] + P6[i][j][k];
                 // C12
-                produto[i][j + newSize][k] = P1[i][j][k] + P2[i][j][k];
+                matriz1[i][j + newSize][k] = P1[i][j][k] + P2[i][j][k];
                 // C21
-                produto[i + newSize][j][k] = P3[i][j][k] + P4[i][j][k];
+                matriz1[i + newSize][j][k] = P3[i][j][k] + P4[i][j][k];
                 // C22
-                produto[i + newSize][j + newSize][k] = P5[i][j][k] + P1[i][j][k] - P3[i][j][k] - P7[i][j][k];
+                matriz1[i + newSize][j + newSize][k] = P5[i][j][k] + P1[i][j][k] - P3[i][j][k] - P7[i][j][k];
             }
         }
     }
@@ -204,6 +197,7 @@ void strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
     liberaMatriz(temp1, newSize);
     liberaMatriz(temp2, newSize);
 
+    imprimeMatriz(matriz1, NumMat, arraySize);
 }
 
 
