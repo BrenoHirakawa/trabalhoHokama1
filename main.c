@@ -3,20 +3,40 @@
 #include <time.h>
 #include "strassen.h"
 
-int main(){
+int main() {
+    int NumMat = 4;  // Exemplo: matriz 4x4
+    int arraySize = 3;  // Cada célula da matriz contém um array de 3 inteiros
 
-    int P1,P2,P3,P4,P5,P6,P7;
+    // Valores de entrada (simulação da entrada que você forneceu)
+    int valores[] = {
+        255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0,
+        255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0,
+        0, 0, 255, 0, 0, 255, 0, 255, 255, 0, 255, 255,
+        0, 0, 255, 0, 0, 255, 0, 255, 255, 0, 255, 255
+    };
 
-    int NumMat = 0;
+    int mult[]={
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 
+        0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 
+        0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 
+        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
-    printf("Escreva o valor da matriz: ");
-    scanf("%d", &NumMat);
+    // Aloca a matriz 4x4
+    int*** matriz = alocaMatriz(NumMat, arraySize);
+    int*** multiplo = alocaMatriz(NumMat, arraySize);
 
-    printf("P3\n");
-    printf("%d %d\n", NumMat, NumMat);
-    matrizAleatoria(NumMat);
+    // Lê os valores e preenche a matriz
+    leMatriz(matriz, NumMat, arraySize, valores);
+    leMatriz(multiplo, NumMat, arraySize, mult);
 
+    // Imprime a matriz
+    imprimeMatriz(matriz, NumMat, arraySize);
+    imprimeMatriz(multiplo, NumMat, arraySize);
 
-    return 0; 
+    // Libera a memória alocada
+    liberaMatriz(matriz, NumMat);
+    liberaMatriz(multiplo, NumMat);
+
+    return 0;
 }
-
