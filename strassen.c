@@ -54,7 +54,38 @@ void leMatriz(int*** matriz, int NumMat, int arraySize, int* valores){
 
 }
 
-int strassen(){
+int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
+
+    int ***produto; 
+    produto = malloc(NumMat * sizeof(int**));   
+
+    for(int i = 0; i < NumMat; i++){
+        produto[i] = malloc(NumMat * sizeof(int*));
+        for(int j = 0; j < NumMat; j++){
+            produto[i][j] = malloc(arraySize * sizeof(int));
+        }
+    }
+
+    if (NumMat <= 2) {
+        // Caso base: multiplicação de matrizes pequenas (2x2 ou 1x1)
+        // Código para multiplicação direta
+        return 0;
+    }
+
+    // Novo tamanho dos quadrantes
+    int newSize = NumMat / 2;
+
+    // Alocar espaço para os quadrantes
+    int*** A = alocaMatriz(newSize, arraySize);
+    int*** B = alocaMatriz(newSize, arraySize);
+    int*** C = alocaMatriz(newSize, arraySize);
+    int*** D = alocaMatriz(newSize, arraySize);
+    int*** E = alocaMatriz(newSize, arraySize);
+    int*** F = alocaMatriz(newSize, arraySize);
+    int*** G = alocaMatriz(newSize, arraySize);
+    int*** H = alocaMatriz(newSize, arraySize);
+    
+
 
 }
 
