@@ -66,6 +66,14 @@ void divideMatriz(int*** matriz, int*** A, int*** B, int*** C, int*** D, int tam
     }
 }
 
+void somaMatriz(){
+
+}
+
+void subMatriz(){
+
+}
+
 int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
 
     int ***produto; 
@@ -88,6 +96,10 @@ int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
     int newSize = NumMat / 2;
 
     // Alocar espaço para os quadrantes
+    //
+    //  A   B   *   E   F   =   AE + BG     AF+BH
+    //  C   D       G   H       CE + DG     CF+DH
+    //
     int*** A = alocaMatriz(newSize, arraySize);
     int*** B = alocaMatriz(newSize, arraySize);
     int*** C = alocaMatriz(newSize, arraySize);
@@ -98,13 +110,45 @@ int strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
     int*** H = alocaMatriz(newSize, arraySize);
     
 
-    int*** P1;
-    int*** P2;
-    int*** P3;
-    int*** P4;
-    int*** P5;
-    int*** P6;
-    int*** P7;
+    int*** P1 = alocaMatriz(newSize, arraySize);
+    int*** P2 = alocaMatriz(newSize, arraySize);
+    int*** P3 = alocaMatriz(newSize, arraySize);
+    int*** P4 = alocaMatriz(newSize, arraySize);
+    int*** P5 = alocaMatriz(newSize, arraySize);
+    int*** P6 = alocaMatriz(newSize, arraySize);
+    int*** P7 = alocaMatriz(newSize, arraySize);
+
+    int*** temp1 = alocaMatriz(newSize, arraySize); 
+    int*** temp2 = alocaMatriz(newSize, arraySize); 
+
+
+    //P1 = A*(F-H)
+    subMatriz();
+    subMatriz();
+    strassen(temp1, temp2, NumMat, arraySize);
+
+    //P2 = (A+B)
+    subMatriz();
+    subMatriz();
+    strassen(temp1, temp2, NumMat, arraySize);
+
+
+    liberaMatriz(A, newSize);
+    liberaMatriz(B, newSize);
+    liberaMatriz(C, newSize);
+    liberaMatriz(D, newSize);
+    liberaMatriz(E, newSize);
+    liberaMatriz(F, newSize);
+    liberaMatriz(G, newSize);
+    liberaMatriz(H, newSize);
+
+    liberaMatriz(P1, newSize);
+    liberaMatriz(P2, newSize);
+    liberaMatriz(P3, newSize);
+    liberaMatriz(P4, newSize);
+    liberaMatriz(P5, newSize);
+    liberaMatriz(P6, newSize);
+    liberaMatriz(P7, newSize);
 
 }
 
