@@ -6,7 +6,7 @@ int*** alocaMatriz(int NumMat, int arraySize);
 
 void liberaMatriz(int*** matriz, int NumMat);
 
-void leMatriz(int*** matriz, int NumMat, int arraySize);
+void leMatriz(FILE *arquivo, int*** matriz, int NumMat, int arraySize);
 
 void imprimeMatriz(int*** matriz, int NumMat, int arraySize);
 
@@ -18,36 +18,41 @@ int ***subtracaoMatriz(int*** A, int*** B, int NumMat, int arraySize);
 
 int ***strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize);
 
+
 int main() {
-    char linha[3];
-    int NumMat;
-    int tamMax; 
 
-    fgets(linha, sizeof(linha), stdin); 
-
-    scanf("%d %d", &NumMat, &NumMat); 
-
-    scanf("%d", &tamMax);
-
-    int arraySize = 3; 
+    // captura arquivo
+     char linha[3], linha3[3];
+     int NumMat;
+  
+    FILE *arquivo;
+    arquivo = fopen("3.in", "r");
+        if(arquivo == NULL){
+            printf("Erro ao tentar abir o arquivo");
+            return -1;
+        }
+     
+        fgets(linha, sizeof(linha), arquivo); //ignora a primeira linha (p3)
+        fscanf(arquivo,"%d %d",&NumMat, &NumMat); // pegando o tamanho da matriz
+        fscanf(arquivo,"%s",linha3 ); //pega a linha 3
+         
+    int arraySize = 3;  // Cada célula da matriz contém um array de 3 inteiros
     int*** matriz = alocaMatriz(NumMat, arraySize);
     int*** multiplo = alocaMatriz(NumMat, arraySize);
-    int*** produto;
+    int*** produto; //= alocaMatriz(NumMat, arraySize);
 
-    leMatriz(matriz, NumMat, arraySize);
-
-    leMatriz(multiplo, NumMat, arraySize);
+    leMatriz(arquivo,matriz, NumMat, arraySize);
+    leMatriz(arquivo,multiplo, NumMat, arraySize);
 
     produto = strassen(matriz, multiplo, NumMat, arraySize);
-
-    printf("P3\n");
-    printf("%d %d\n", NumMat, NumMat);
-    printf("%d\n", tamMax);
     imprimeMatriz(produto, NumMat, arraySize);
 
+    // Libera a memória alocada
     liberaMatriz(matriz, NumMat);
     liberaMatriz(multiplo, NumMat);
     liberaMatriz(produto, NumMat);
+    
+    fclose(arquivo);
 
     return 0;
 }
@@ -78,11 +83,11 @@ void liberaMatriz(int*** matriz, int NumMat){
 }
 
 
-void leMatriz(int*** matriz, int NumMat, int arraySize) {
-    for(int i = 0; i < NumMat; i++) {
-        for(int j = 0; j < NumMat; j++) {
-            for(int k = 0; k < arraySize; k++) {
-                scanf("%d", &matriz[i][j][k]);
+void leMatriz(FILE *arquivo, int*** matriz, int NumMat, int arraySize){
+    for(int i = 0; i < NumMat; i++){
+        for(int j = 0; j < NumMat;  j++){
+            for(int k =0; k  < arraySize; k++){
+                fscanf(arquivo, "%d", &matriz[i][j][k]);
             }
         }
     }
