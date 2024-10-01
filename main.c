@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-//#include "strassen.h"
 
 int*** alocaMatriz(int NumMat, int arraySize);
 
 void liberaMatriz(int*** matriz, int NumMat);
 
-void leMatriz(int*** matriz, int NumMat, int arraySize, int* valores);
+void leMatriz(int*** matriz, int NumMat, int arraySize);
 
 void imprimeMatriz(int*** matriz, int NumMat, int arraySize);
 
@@ -19,49 +18,33 @@ int ***subtracaoMatriz(int*** A, int*** B, int NumMat, int arraySize);
 
 int ***strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize);
 
-
 int main() {
-    int NumMat = 4;  // Exemplo: matriz 4x4
-    int arraySize = 3;  // Cada célula da matriz contém um array de 3 inteiros
+    char linha[3];
+    int NumMat;
+    int tamMax; 
 
+    fgets(linha, sizeof(linha), stdin); 
+
+    scanf("%d %d", &NumMat, &NumMat); 
+
+    scanf("%d", &tamMax);
+
+    int arraySize = 3; 
     int*** matriz = alocaMatriz(NumMat, arraySize);
     int*** multiplo = alocaMatriz(NumMat, arraySize);
-    int*** produto; //= alocaMatriz(NumMat, arraySize);
+    int*** produto;
 
+    leMatriz(matriz, NumMat, arraySize);
 
-    // Valores de entrada (simulação da entrada que você forneceu)
-    int valores1[] = {
-        255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0,
-        255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0,
-        0, 0, 255, 0, 0, 255, 0, 255, 255, 0, 255, 255,
-        0, 0, 255, 0, 0, 255, 0, 255, 255, 0, 255, 255
-    };
-
-    int valores2[]={
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 
-        0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 
-        0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-
-
-    //produto = strassen(matriz, multiplo, NumMat, arraySize);
-
-
-    // Lê os valores e preenche a matriz
-    leMatriz(matriz, NumMat, arraySize, valores1);
-    leMatriz(multiplo, NumMat, arraySize, valores2);
-
-    // Imprime a matriz
-    imprimeMatriz(matriz, NumMat, arraySize);
-    imprimeMatriz(multiplo, NumMat, arraySize);
+    leMatriz(multiplo, NumMat, arraySize);
 
     produto = strassen(matriz, multiplo, NumMat, arraySize);
-    printf("Produto\n");
+
+    printf("P3\n");
+    printf("%d %d\n", NumMat, NumMat);
+    printf("%d\n", tamMax);
     imprimeMatriz(produto, NumMat, arraySize);
 
-
-    // Libera a memória alocada
     liberaMatriz(matriz, NumMat);
     liberaMatriz(multiplo, NumMat);
     liberaMatriz(produto, NumMat);
@@ -94,16 +77,17 @@ void liberaMatriz(int*** matriz, int NumMat){
     free(matriz);
 }
 
-void leMatriz(int*** matriz, int NumMat, int arraySize, int* valores){
-    int index = 0; 
-    for(int i = 0; i < NumMat; i++){
-        for(int j = 0; j < NumMat; j++){
-            for(int k = 0; k < arraySize; k++){
-                matriz[i][j][k] = valores[index++];
+
+void leMatriz(int*** matriz, int NumMat, int arraySize) {
+    for(int i = 0; i < NumMat; i++) {
+        for(int j = 0; j < NumMat; j++) {
+            for(int k = 0; k < arraySize; k++) {
+                scanf("%d", &matriz[i][j][k]);
             }
         }
     }
 }
+
 
 void imprimeMatriz(int*** matriz, int NumMat, int arraySize) {
     for (int i = 0; i < NumMat; i++) {
@@ -116,14 +100,15 @@ void imprimeMatriz(int*** matriz, int NumMat, int arraySize) {
     }
 }
 
-void divideMatriz(int*** matriz, int*** A, int*** B, int*** C, int*** D, int tam){
-    // A, B, C e D são os quadrantes da matriz original
+void divideMatriz(int*** matriz, int*** A, int*** B, int*** C, int*** D, int tam) {
     for (int i = 0; i < tam; i++) {
         for (int j = 0; j < tam; j++) {
-            A[i][j] = matriz[i][j];              // Quadrante A
-            B[i][j] = matriz[i][j + tam];        // Quadrante B
-            C[i][j] = matriz[i + tam][j];        // Quadrante C
-            D[i][j] = matriz[i + tam][j + tam];  // Quadrante D
+            for (int k = 0; k < 3; k++) {  // Since each element is an array of size 3
+                A[i][j][k] = matriz[i][j][k];              // Quadrante A
+                B[i][j][k] = matriz[i][j + tam][k];        // Quadrante B
+                C[i][j][k] = matriz[i + tam][j][k];        // Quadrante C
+                D[i][j][k] = matriz[i + tam][j + tam][k];  // Quadrante D
+            }
         }
     }
 }
@@ -153,9 +138,11 @@ int ***subtracaoMatriz(int*** A, int*** B, int NumMat, int arraySize) {
     return res;
 }
 
+
 int ***strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
 
-    int ***produto = alocaMatriz(NumMat,  arraySize);
+    int ***produto = alocaMatriz(NumMat, arraySize);
+
 
     if (NumMat == 1) {
         for (int k = 0; k < arraySize; k++) {
@@ -181,48 +168,49 @@ int ***strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
     divideMatriz(matriz2, E, F, G, H, newSize);
 
     // Alocando matrizes temporárias
-    int*** P1 = alocaMatriz(newSize, arraySize);
-    int*** P2 = alocaMatriz(newSize, arraySize);
-    int*** P3 = alocaMatriz(newSize, arraySize);
-    int*** P4 = alocaMatriz(newSize, arraySize);
-    int*** P5 = alocaMatriz(newSize, arraySize);
-    int*** P6 = alocaMatriz(newSize, arraySize);
-    int*** P7 = alocaMatriz(newSize, arraySize);
-
-    int*** temp1 = alocaMatriz(newSize, arraySize); 
-    int*** temp2 = alocaMatriz(newSize, arraySize); 
-
+    int*** P1, ***P2, ***P3, ***P4, ***P5, ***P6, ***P7;
+    int*** temp1, ***temp2;
 
     // P1 = A * (F - H)
-    //temp1 = subtracaoMatriz(F, H, newSize, arraySize);
-    P1 = strassen(A, subtracaoMatriz(F, H, newSize, arraySize), newSize, arraySize);
+    temp1 = subtracaoMatriz(F, H, newSize, arraySize);
+    P1 = strassen(A, temp1, newSize, arraySize);
+    liberaMatriz(temp1, newSize);
 
     // P2 = (A + B) * H
     temp1 = somaMatriz(A, B, newSize, arraySize);
     P2 = strassen(temp1, H, newSize, arraySize);
+    liberaMatriz(temp1, newSize);
 
     // P3 = (C + D) * E
     temp1 = somaMatriz(C, D, newSize, arraySize);
     P3 = strassen(temp1, E, newSize, arraySize);
+    liberaMatriz(temp1, newSize);
 
     // P4 = D * (G − E)
     temp1 = subtracaoMatriz(G, E, newSize, arraySize);
     P4 = strassen(D, temp1, newSize, arraySize);
+    liberaMatriz(temp1, newSize);
 
     // P5 = (A + D) * (E + H)
     temp1 = somaMatriz(A, D, newSize, arraySize);
     temp2 = somaMatriz(E, H, newSize, arraySize);
     P5 = strassen(temp1, temp2, newSize, arraySize);
+    liberaMatriz(temp1, newSize);
+    liberaMatriz(temp2, newSize);
 
     // P6 = (B − D) * (G + H)
     temp1 = subtracaoMatriz(B, D, newSize, arraySize);
     temp2 = somaMatriz(G, H, newSize, arraySize);
     P6 = strassen(temp1, temp2, newSize, arraySize);
+    liberaMatriz(temp1, newSize);
+    liberaMatriz(temp2, newSize);
 
     // P7 = (A − C) * (E + F)
     temp1 = subtracaoMatriz(A, C, newSize, arraySize);
     temp2 = somaMatriz(E, F, newSize, arraySize);
     P7 = strassen(temp1, temp2, newSize, arraySize);
+    liberaMatriz(temp1, newSize);
+    liberaMatriz(temp2, newSize);
 
     // Recombinando os quadrantes
     for (int i = 0; i < newSize; i++) {
@@ -236,8 +224,7 @@ int ***strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
         }
     }
 
-
-    // Liberando a memória
+    // Liberando matrizes P1 a P7 e os quadrantes
     liberaMatriz(P1, newSize);
     liberaMatriz(P2, newSize);
     liberaMatriz(P3, newSize);
@@ -245,9 +232,15 @@ int ***strassen(int*** matriz1, int*** matriz2, int NumMat, int arraySize){
     liberaMatriz(P5, newSize);
     liberaMatriz(P6, newSize);
     liberaMatriz(P7, newSize);
-    liberaMatriz(temp1, newSize);
-    liberaMatriz(temp2, newSize);
 
+    liberaMatriz(A, newSize);
+    liberaMatriz(B, newSize);
+    liberaMatriz(C, newSize);
+    liberaMatriz(D, newSize);
+    liberaMatriz(E, newSize);
+    liberaMatriz(F, newSize);
+    liberaMatriz(G, newSize);
+    liberaMatriz(H, newSize);
 
-    return produto; 
+    return produto;
 }
