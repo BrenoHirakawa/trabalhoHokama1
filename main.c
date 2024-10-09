@@ -1,7 +1,7 @@
-//
-//
-//Breno Yukihiro Hirakawa
-//Tiago Antonio Vilela Carvalho
+//CTCO04 - Projeto e Análise de Algoritmos 
+//Trabalho 01
+//Breno Yukihiro Hirakawa - 2021001120
+//Tiago Antonio Vilela Carvalho - 2022000969 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +17,7 @@ array** alocaMatriz(int NumMat) {
     // Alocar a matriz de ponteiros para as linhas
     array** matriz = malloc(NumMat * sizeof(array*));
     for (int i = 0; i < NumMat; i++) {
-        // Alocar cada linha da matriz de arrayuadrantes
+        // Alocar cada linha da matriz de array
         matriz[i] = malloc(NumMat * sizeof(array));
     }
     return matriz;
@@ -188,7 +188,6 @@ array** multiplicaStrassen(array** matriz, array** matriz2, int  n){
     liberaMemoria(T2, newSize);
 
 
-
     // C11 = P5 + P4 - P2 + P6
     T1 = somaMatriz(P5, P4, newSize);
     T2 = subtracaoMatriz(T1, P2, newSize);
@@ -241,12 +240,10 @@ int main() {
     char tipo[3];
     int NumMat, max_val;
 
-    // le as infos do cabeçalho
     scanf("%s", tipo); 
     scanf("%d %d", &NumMat, &NumMat);
     scanf("%d", &max_val);
 
-    //int NumMat = 2;  // Tamanho da matriz (2x2)
     array** matriz = alocaMatriz(NumMat);
     array** matriz2 = alocaMatriz(NumMat);
 
